@@ -1,0 +1,31 @@
+name: Test & Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test_and_lint:
+    name: Run flake8, ufmt & unit tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        pip install .
+    - name: ufmt
+      run: |
+        ufmt diff .
+    - name: flake8
+      run: |
+        flake8
+    - name: unit tests
+      run: |
+        pytest -ra test/ --cov heterogeneous_botl/ --cov-report term-missing
